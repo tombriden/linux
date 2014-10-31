@@ -16,6 +16,7 @@
 #include <linux/module.h>
 #include <linux/of.h>
 #include <linux/platform_device.h>
+#include <linux/phy/phy.h>
 #include <linux/usb/phy.h>
 #include <linux/slab.h>
 #include <linux/acpi.h>
@@ -209,6 +210,41 @@ static int xhci_plat_probe(struct platform_device *pdev)
 			*priv = *priv_match;
 	}
 
+	/* Get possile USB 2.0 type PHY (UTMI+) available with xhci */
+	hcd->phy = devm_phy_get(&pdev->dev, "usb2-phy");
+	if (IS_ERR(hcd->phy)) {
+		ret = PTR_ERR(hcd->phy);
+		if (ret == -EPROBE_DEFER) {
+			goto disable_clk;
+		} else if (ret != -ENOSYS && ret != -ENODEV) {
+			hcd->phy = NULL;
+			dev_warn(&pdev->dev,
+				 "Error retrieving usb2 phy: %d\n", ret);
+		}
+	}
+
+	ret = usb_add_hcd(hcd, irq, IRQF_SHARED);
+	if (ret)
+		goto disable_clk;
+
+	/*
+	 * Initialize and power-on USB 2.0 PHY
+	 * FIXME: Isn't this a hacky way of initializing the PHY again ?
+	 * xhci's parent would have already initialized the PHY, but we
+	 * wanna do it again.
+	 */
+	hcd->phy->init_count = 0;
+	ret = phy_init(hcd->phy);
+	if (ret)
+		goto dealloc_usb2_hcd;
+
+	hcd->phy->power_count = 0;
+	ret = phy_power_on(hcd->phy);
+	if (ret) {
+		phy_exit(hcd->phy);
+		goto dealloc_usb2_hcd;
+	}
+
 	device_wakeup_enable(hcd->self.controller);
 
 	xhci->clk = clk;
@@ -226,16 +262,17 @@ static int xhci_plat_probe(struct platform_device *pdev)
 	if (device_property_read_bool(&pdev->dev, "quirk-broken-port-ped"))
 		xhci->quirks |= XHCI_BROKEN_PORT_PED;
 
-	hcd->usb_phy = devm_usb_get_phy_by_phandle(&pdev->dev, "usb-phy", 0);
-	if (IS_ERR(hcd->usb_phy)) {
-		ret = PTR_ERR(hcd->usb_phy);
-		if (ret == -EPROBE_DEFER)
+	/* Get possile USB 3.0 type PHY (PIPE3) available with xhci */
+	xhci->shared_hcd->phy = devm_phy_get(&pdev->dev, "usb3-phy");
+	if (IS_ERR(xhci->shared_hcd->phy)) {
+		ret = PTR_ERR(xhci->shared_hcd->phy);
+		if (ret == -EPROBE_DEFER) {
 			goto put_usb3_hcd;
-		hcd->usb_phy = NULL;
-	} else {
-		ret = usb_phy_init(hcd->usb_phy);
-		if (ret)
-			goto put_usb3_hcd;
+		} else if (ret != -ENOSYS && ret != -ENODEV) {
+			xhci->shared_hcd->phy = NULL;
+			dev_warn(&pdev->dev,
+				 "Error retrieving usb3 phy: %d\n", ret);
+		}
 	}
 
 	ret = usb_add_hcd(hcd, irq, IRQF_SHARED);
@@ -249,17 +286,29 @@ static int xhci_plat_probe(struct platform_device *pdev)
 	if (ret)
 		goto dealloc_usb2_hcd;
 
+	/* Initialize and power-on USB 3.0 PHY */
+	xhci->shared_hcd->phy->init_count = 0;
+	ret = phy_init(xhci->shared_hcd->phy);
+	if (ret)
+		goto dealloc_usb3_hcd;
+
+	xhci->shared_hcd->phy->power_count = 0;
+	ret = phy_power_on(xhci->shared_hcd->phy);
+	if (ret) {
+		phy_exit(xhci->shared_hcd->phy);
+		goto dealloc_usb3_hcd;
+	}
+
 	return 0;
 
-
-dealloc_usb2_hcd:
-	usb_remove_hcd(hcd);
-
-disable_usb_phy:
-	usb_phy_shutdown(hcd->usb_phy);
+dealloc_usb3_hcd:
+	usb_remove_hcd(xhci->shared_hcd);
 
 put_usb3_hcd:
 	usb_put_hcd(xhci->shared_hcd);
+
+dealloc_usb2_hcd:
+	usb_remove_hcd(hcd);
 
 disable_clk:
 	if (!IS_ERR(clk))
@@ -279,8 +328,14 @@ static int xhci_plat_remove(struct platform_device *dev)
 
 	xhci->xhc_state |= XHCI_STATE_REMOVING;
 
+	phy_power_off(xhci->shared_hcd->phy);
+	phy_exit(xhci->shared_hcd->phy);
+
 	usb_remove_hcd(xhci->shared_hcd);
 	usb_phy_shutdown(hcd->usb_phy);
+
+	phy_power_off(hcd->phy);
+	phy_exit(hcd->phy);
 
 	usb_remove_hcd(hcd);
 	usb_put_hcd(xhci->shared_hcd);
@@ -298,6 +353,8 @@ static int xhci_plat_suspend(struct device *dev)
 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
 
+	phy_exit(hcd->phy);
+
 	/*
 	 * xhci_suspend() needs `do_wakeup` to know whether host is allowed
 	 * to do wakeup during suspend. Since xhci_plat_suspend is currently
@@ -313,6 +370,11 @@ static int xhci_plat_resume(struct device *dev)
 {
 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+	int ret;
+
+	ret = phy_init(hcd->phy);
+	if (ret)
+		return ret;
 
 	return xhci_resume(xhci, 0);
 }
