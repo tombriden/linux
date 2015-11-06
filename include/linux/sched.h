@@ -1070,6 +1070,10 @@ struct sched_domain {
 	u64 max_newidle_lb_cost;
 	unsigned long next_decay_max_lb_cost;
 
+#ifdef CONFIG_HPERF_HMP
+	struct sched_group *a15_group;
+	struct sched_group *a7_group;
+#endif
 #ifdef CONFIG_SCHEDSTATS
 	/* load_balance() stats */
 	unsigned int lb_count[CPU_MAX_IDLE_TYPES];
