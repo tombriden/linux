@@ -7416,6 +7416,10 @@ void __init sched_init(void)
 #endif
 		init_rq_hrtick(rq);
 		atomic_set(&rq->nr_iowait, 0);
+#ifdef CONFIG_HPERF_HMP
+		rq->druntime_sum = 0;
+		rq->nr_hmp_tasks = 0;
+#endif
 	}
 
 	set_load_weight(&init_task);
