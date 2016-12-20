@@ -149,9 +149,18 @@ static const int cap_last_cap = CAP_LAST_CAP;
 static unsigned long hung_task_timeout_max = (LONG_MAX/HZ);
 #endif
 
+#ifdef CONFIG_FB_CON_DECOR
+extern char fbcon_decor_path[];
+#endif
+
 #ifdef CONFIG_INOTIFY_USER
 #include <linux/inotify.h>
 #endif
+
+#ifdef CONFIG_ALPHA_UAC_SYSCTL
+extern struct ctl_table uac_table[];
+#endif
+
 #ifdef CONFIG_SPARC
 #endif
 
@@ -261,6 +270,15 @@ static struct ctl_table sysctl_base_table[] = {
 		.mode		= 0555,
 		.child		= dev_table,
 	},
+#ifdef CONFIG_FB_CON_DECOR
+	{
+		.procname	= "fbcondecor",
+		.data		= &fbcon_decor_path,
+		.maxlen		= KMOD_PATH_LEN,
+		.mode		= 0644,
+		.proc_handler	= &proc_dostring,
+	},
+#endif
 	{ }
 };
 
@@ -1861,6 +1879,13 @@ static struct ctl_table debug_table[] = {
 		.extra2		= &one,
 	},
 #endif
+#ifdef CONFIG_ALPHA_UAC_SYSCTL
+	{
+	        .procname   = "uac",
+		.mode       = 0555,
+	        .child      = uac_table,
+	 },
+#endif /* CONFIG_ALPHA_UAC_SYSCTL */
 	{ }
 };
 
