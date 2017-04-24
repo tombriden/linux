@@ -696,6 +696,33 @@ config HZ
 	default 1200 if HZ_1200
 	default 1024
 
+config ALPHA_UAC_SYSCTL
+       bool "Configure UAC policy via sysctl"
+       depends on SYSCTL
+       default y
+       ---help---
+         Configuring the UAC (unaligned access control) policy on a Linux
+         system usually involves setting a compile time define. If you say
+         Y here, you will be able to modify the UAC policy at runtime using
+         the /proc interface.
+
+         The UAC policy defines the action Linux should take when an
+         unaligned memory access occurs. The action can include printing a
+         warning message (NOPRINT), sending a signal to the offending
+         program to help developers debug their applications (SIGBUS), or
+         disabling the transparent fixing (NOFIX).
+
+         The sysctls will be initialized to the compile-time defined UAC
+         policy. You can change these manually, or with the sysctl(8)
+         userspace utility.
+
+         To disable the warning messages at runtime, you would use
+
+           echo 1 > /proc/sys/kernel/uac/noprint
+
+         This is pretty harmless. Say Y if you're not sure.
+
+
 source "drivers/pci/Kconfig"
 source "drivers/eisa/Kconfig"
 
