@@ -31,6 +31,10 @@ static const struct font_desc *fonts[] = {
 #undef NO_FONTS
     &font_vga_8x16,
 #endif
+#ifdef CONFIG_FONT_16x32
+#undef NO_FONTS
+    &font_vga_16x32,
+#endif
 #ifdef CONFIG_FONT_6x11
 #undef NO_FONTS
     &font_vga_6x11,
