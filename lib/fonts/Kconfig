@@ -43,6 +43,14 @@ config FONT_8x16
 
 	  If unsure, say Y.
 
+config FONT_16x32
+	bool "VGA 16x32 font" if FONTS
+	help
+	  This is the "higher resolution" font for the VGA frame buffer (the one
+	  provided by the VGA text console mode.
+
+	  If unsure, say Y.
+
 config FONT_6x11
 	bool "Mac console 6x11 font (not supported by all drivers)" if FONTS
 	depends on FRAMEBUFFER_CONSOLE || STI_CONSOLE
