@@ -55,7 +55,7 @@
 		cooling-min-state = <0>;
 		cooling-max-state = <3>;
 		#cooling-cells = <2>;
-		cooling-levels = <0 110 170 230>;
+		cooling-levels = <0 150 190 252>;
 	};
 
 	thermal-zones {
