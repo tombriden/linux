@@ -1660,7 +1660,11 @@ usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
 	dev->interrupt_count = 0;
 
 	dev->net = net;
+#ifdef CONFIG_ANDROID
 	strcpy (net->name, "eth%d");
+#else
+	strcpy (net->name, "usb%d");
+#endif
 	memcpy (net->dev_addr, node_id, sizeof node_id);
 
 	/* rx and tx sides can use different message sizes;
