@@ -18,17 +18,17 @@
 			polling-delay = <1000>;
 			trips {
 				UNIQIFY(cpu_alert0): cpu-alert-0 {
-					temperature = <70000>; /* millicelsius */
+					temperature = <65000>; /* millicelsius */
 					hysteresis = <10000>; /* millicelsius */
 					type = "active";
 				};
 				UNIQIFY(cpu_alert1): cpu-alert-1 {
-					temperature = <75000>; /* millicelsius */
+					temperature = <70000>; /* millicelsius */
 					hysteresis = <10000>; /* millicelsius */
 					type = "active";
 				};
 				UNIQIFY(cpu_alert2): cpu-alert-2 {
-					temperature = <80000>; /* millicelsius */
+					temperature = <75000>; /* millicelsius */
 					hysteresis = <10000>; /* millicelsius */
 					type = "active";
 				};
@@ -48,7 +48,7 @@
 					type = "passive";
 				};
 				UNIQIFY(cpu_criti0): cpu-crit-0 {
-					temperature = <115000>; /* millicelsius */
+					temperature = <105000>; /* millicelsius */
 					hysteresis = <3000>; /* millicelsius */
 					type = "critical";
 				};
@@ -70,31 +70,40 @@
 				 * When reaching cpu_alert3, reduce A15 cores by 1 step.
 				 * The 2GHz step causes high thermals on multithreaded workloads
 				 * so better performance is gained by managing it out early.
+				 * big 2.0Ghz -> 1.6Ghz
 				 */
 				map3 {
 					trip = <&UNIQIFY(cpu_alert3)>;
-					cooling-device = <&cpu4 0 1>;
+					cooling-device = <&cpu4 0 4>;
 				};
 				/*
 				* When reaching cpu_alert4, reduce A15 cores by 3 steps
 				* to further manage the performance level while keeping
 				* thermals under control.
+				* big 1.5Ghz -> 600Mhz
+				* LITTLE 1.4Ghz -> 1.2Ghz
 				*/
 				map4 {
 					trip = <&UNIQIFY(cpu_alert4)>;
-					cooling-device = <&cpu4 2 4>;
+					cooling-device = <&cpu4 5 14>;
+				};
+				map5 {
+					trip = <&UNIQIFY(cpu_alert4)>;
+					cooling-device = <&cpu0 0 2>;
 				};
 				/*
 				 * When reaching cpu_alert5, reduce all CPUs to ensure thermal
 				 * safety. A7 cores don't produce much thermal load so they are
 				 * reduced less to optimise performance.
+				 * big 500Mhz -> 200Mhz
+				 * LITTLE 1.2Ghz -> 600Mhz
 				 */
-				map5 {
-					trip = <&UNIQIFY(cpu_alert5)>;
-					cooling-device = <&cpu0 0 2>;
-				};
 				map6 {
 					trip = <&UNIQIFY(cpu_alert5)>;
-					cooling-device = <&cpu4 5 14>;
+					cooling-device = <&cpu0 2 8>;
+				};
+				map7 {
+					trip = <&UNIQIFY(cpu_alert5)>;
+					cooling-device = <&cpu4 14 18>;
 				};
 			};
