@@ -327,6 +327,16 @@ static void alc_fill_eapd_coef(struct hda_codec *codec)
 	case 0x10ec0225:
 	case 0x10ec0295:
 	case 0x10ec0299:
+		alc_update_coef_idx(codec, 0x08, 0xf000, 0x6a0c);
+		alc_update_coef_idx(codec, 0x24, 0xf000, 0x0012);
+		alc_update_coef_idx(codec, 0x26, 0xf000, 0x003a);
+		alc_update_coef_idx(codec, 0x28, 0xf000, 0x1dfe);
+		alc_update_coef_idx(codec, 0x29, 0xf000, 0xb014);
+		alc_update_coef_idx(codec, 0x2b, 0xf000, 0xfdfe);
+		alc_update_coef_idx(codec, 0x30, 0xf000, 0x9007);
+		alc_update_coef_idx(codec, 0x37, 0xf000, 0xfe15);
+		alc_update_coef_idx(codec, 0x45, 0xf000, 0xd289);
+		alc_update_coef_idx(codec, 0x46, 0xf000, 0x00f4);
 		alc_update_coef_idx(codec, 0x67, 0xf000, 0x3000);
 		/* fallthrough */
 	case 0x10ec0215:
