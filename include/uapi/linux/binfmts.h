@@ -12,7 +12,7 @@ struct pt_regs;
  * prevent the kernel from being unduly impacted by misaddressed pointers.
  * MAX_ARG_STRINGS is chosen to fit in a signed 32-bit integer.
  */
-#define MAX_ARG_STRLEN (PAGE_SIZE * 32)
+#define MAX_ARG_STRLEN (PAGE_SIZE * 64)
 #define MAX_ARG_STRINGS 0x7FFFFFFF
 
 /* sizeof(linux_binprm->buf) */
