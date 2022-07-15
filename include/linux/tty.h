@@ -239,7 +239,7 @@ struct tty_struct {
 
 	struct list_head tty_files;
 
-#define N_TTY_BUF_SIZE 4096
+#define N_TTY_BUF_SIZE 16384
 	struct work_struct SAK_work;
 } __randomize_layout;
 
