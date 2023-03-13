@@ -132,6 +132,7 @@
 			interrupt-parent = <&gic>;
 			interrupts = <GIC_SPI 240 IRQ_TYPE_EDGE_RISING 0>;
 		};
+
 	};
 
 	gmac0: ethernet@fe1b0000 {
