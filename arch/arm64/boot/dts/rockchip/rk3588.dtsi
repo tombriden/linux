@@ -7,6 +7,34 @@
 #include "rk3588-pinctrl.dtsi"
 
 / {
+	usbdrd3_1: usb@fc400000 {
+		compatible = "rockchip,rk3588-dwc3-otg", "rockchip,rk3399-dwc3";
+		clocks = <&cru REF_CLK_USB3OTG1>, <&cru SUSPEND_CLK_USB3OTG1>,
+			 <&cru ACLK_USB3OTG1>;
+		clock-names = "ref", "suspend", "bus";
+		ranges;
+		resets = <&cru SRST_A_USB3OTG1>;
+		reset-names = "usb3-otg";
+		#address-cells = <2>;
+		#size-cells = <2>;
+		status = "disabled";
+
+		usbdrd_dwc3_1: usb@fc400000 {
+			compatible = "snps,dwc3";
+			reg = <0x0 0xfc400000 0x0 0x400000>;
+			interrupts = <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH 0>;
+			power-domains = <&power RK3588_PD_USB>;
+			dr_mode = "host";
+			phys = <&u2phy1_otg>, <&usbdp_phy1_u3>;
+			phy-names = "usb2-phy", "usb3-phy";
+			phy_type = "utmi_wide";
+			snps,dis_enblslpm_quirk;
+			snps,dis-u2-freeclk-exists-quirk;
+			snps,dis-del-phy-power-chg-quirk;
+			snps,dis-tx-ipgap-linecheck-quirk;
+		};
+	};
+
 	pipe_phy1_grf: syscon@fd5c0000 {
 		compatible = "rockchip,rk3588-pipe-phy-grf", "syscon";
 		reg = <0x0 0xfd5c0000 0x0 0x100>;
@@ -34,7 +62,6 @@
 			clock-names = "phyclk";
 			clock-output-names = "usb480m_phy1";
 			#clock-cells = <0>;
-			rockchip,usbctrl-grf = <&usb_grf>;
 			status = "disabled";
 
 			u2phy1_otg: otg-port {
