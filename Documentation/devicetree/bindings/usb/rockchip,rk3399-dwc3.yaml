@@ -11,7 +11,13 @@ maintainers:
 
 properties:
   compatible:
-    const: rockchip,rk3399-dwc3
+    oneOf:
+      - items:
+          - enum:
+              - rockchip,rk3588-dwc3-otg
+              - rockchip,rk3588-dwc3-host
+          - const: rockchip,rk3399-dwc3
+      - const: rockchip,rk3399-dwc3
 
   '#address-cells':
     const: 2
@@ -22,35 +28,37 @@ properties:
   ranges: true
 
   clocks:
-    items:
-      - description:
-          Controller reference clock, must to be 24 MHz
-      - description:
-          Controller suspend clock, must to be 24 MHz or 32 KHz
-      - description:
-          Master/Core clock, must to be >= 62.5 MHz for SS
-          operation and >= 30MHz for HS operation
-      - description:
-          USB3 aclk peri
-      - description:
-          USB3 aclk
-      - description:
-          Controller grf clock
+    minItems: 3
+    maxItems: 6
 
   clock-names:
     items:
-      - const: ref_clk
-      - const: suspend_clk
-      - const: bus_clk
-      - const: aclk_usb3_rksoc_axi_perf
-      - const: aclk_usb3
-      - const: grf_clk
+      oneOf:
+        - enum:
+            - ref
+            - ref_clk
+        - enum:
+            - suspend
+            - suspend_clk
+        - enum:
+            - bus
+            - bus_clk
+        - const: aclk_usb3_rksoc_axi_perf
+        - const: aclk_usb3
+        - const: grf_clk
+        - const: utmi
+        - const: php
+        - const: pipe
+    minItems: 3
+    maxItems: 6
 
   resets:
     maxItems: 1
 
   reset-names:
-    const: usb3-otg
+    enum:
+      - usb3-host
+      - usb3-otg
 
 patternProperties:
   '^usb@':
@@ -67,6 +75,61 @@ required:
   - clock-names
   - resets
   - reset-names
+
+allOf:
+  - if:
+      properties:
+        compatible:
+          const: rockchip,rk3399-dwc3
+    then:
+      properties:
+        clocks:
+          minItems: 6
+        clock-names:
+          items:
+            - const: ref_clk
+            - const: suspend_clk
+            - const: bus_clk
+            - const: aclk_usb3_rksoc_axi_perf
+            - const: aclk_usb3
+            - const: grf_clk
+        reset-names:
+          const: usb3-otg
+  - if:
+      properties:
+        compatible:
+          contains:
+            const: rockchip,rk3588-dwc3-otg
+    then:
+      properties:
+        clocks:
+          maxItems: 3
+        clock-names:
+          items:
+            - const: ref
+            - const: suspend
+            - const: bus
+        reset-names:
+          const: usb3-otg
+  - if:
+      properties:
+        compatible:
+          contains:
+            const: rockchip,rk3588-dwc3-host
+    then:
+      properties:
+        clocks:
+          minItems: 6
+        clock-names:
+          items:
+            - const: ref
+            - const: suspend
+            - const: bus
+            - const: utmi
+            - const: php
+            - const: pipe
+        reset-names:
+          const: usb3-host
 
 examples:
   - |
