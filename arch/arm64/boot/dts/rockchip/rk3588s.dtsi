@@ -8,9 +8,9 @@
 #include <dt-bindings/interrupt-controller/irq.h>
 #include <dt-bindings/power/rk3588-power.h>
 #include <dt-bindings/reset/rockchip,rk3588-cru.h>
-#include <dt-bindings/thermal/thermal.h>
 #include <dt-bindings/phy/phy.h>
 #include <dt-bindings/ata/ahci.h>
+#include <dt-bindings/thermal/thermal.h>
 
 / {
 	compatible = "rockchip,rk3588";
@@ -949,6 +949,36 @@
 		reg = <0x0 0xfd58c000 0x0 0x1000>;
 	};
 
+	bigcore0_grf: syscon@fd590000 {
+		compatible = "rockchip,rk3588-bigcore0-grf", "syscon";
+		reg = <0x0 0xfd590000 0x0 0x100>;
+	};
+
+	bigcore1_grf: syscon@fd592000 {
+		compatible = "rockchip,rk3588-bigcore1-grf", "syscon";
+		reg = <0x0 0xfd592000 0x0 0x100>;
+	};
+
+	php_grf: syscon@fd5b0000 {
+		compatible = "rockchip,rk3588-php-grf", "syscon";
+		reg = <0x0 0xfd5b0000 0x0 0x1000>;
+	};
+
+	pipe_phy0_grf: syscon@fd5bc000 {
+		compatible = "rockchip,rk3588-pipe-phy-grf", "syscon";
+		reg = <0x0 0xfd5bc000 0x0 0x100>;
+	};
+
+	pipe_phy2_grf: syscon@fd5c4000 {
+		compatible = "rockchip,rk3588-pipe-phy-grf", "syscon";
+		reg = <0x0 0xfd5c4000 0x0 0x100>;
+	};
+
+	usbdpphy0_grf: syscon@fd5c8000 {
+		compatible = "rockchip,rk3588-usbdpphy-grf", "syscon";
+		reg = <0x0 0xfd5c8000 0x0 0x4000>;
+	};
+
 	usb2phy0_grf: syscon@fd5d0000 {
 		compatible = "rockchip,rk3588-usb2phy-grf", "syscon",
 			     "simple-mfd";
@@ -1034,36 +1064,6 @@
 				status = "disabled";
 			};
 		};
-	};
-
-	bigcore0_grf: syscon@fd590000 {
-		compatible = "rockchip,rk3588-bigcore0-grf", "syscon";
-		reg = <0x0 0xfd590000 0x0 0x100>;
-	};
-
-	bigcore1_grf: syscon@fd592000 {
-		compatible = "rockchip,rk3588-bigcore1-grf", "syscon";
-		reg = <0x0 0xfd592000 0x0 0x100>;
-	};
-
-	php_grf: syscon@fd5b0000 {
-		compatible = "rockchip,rk3588-php-grf", "syscon";
-		reg = <0x0 0xfd5b0000 0x0 0x1000>;
-	};
-
-	pipe_phy0_grf: syscon@fd5bc000 {
-		compatible = "rockchip,rk3588-pipe-phy-grf", "syscon";
-		reg = <0x0 0xfd5bc000 0x0 0x100>;
-	};
-
-	pipe_phy2_grf: syscon@fd5c4000 {
-		compatible = "rockchip,rk3588-pipe-phy-grf", "syscon";
-		reg = <0x0 0xfd5c4000 0x0 0x100>;
-	};
-
-	usbdpphy0_grf: syscon@fd5c8000 {
-		compatible = "rockchip,rk3588-usbdpphy-grf", "syscon";
-		reg = <0x0 0xfd5c8000 0x0 0x4000>;
 	};
 
 	ioc: syscon@fd5f0000 {
@@ -1805,9 +1805,6 @@
 				<0 0 0 3 &pcie2x1l1_intc 2>,
 				<0 0 0 4 &pcie2x1l1_intc 3>;
 		linux,pci-domain = <3>;
-		num-ib-windows = <8>;
-		num-ob-windows = <8>;
-		num-viewport = <4>;
 		max-link-speed = <2>;
 		msi-map = <0x3000 &its0 0x3000 0x1000>;
 		num-lanes = <1>;
@@ -1816,7 +1813,7 @@
 		power-domains = <&power RK3588_PD_PCIE>;
 		ranges = <0x01000000 0x0 0xf3100000 0x0 0xf3100000 0x0 0x00100000>,
 			 <0x02000000 0x0 0xf3200000 0x0 0xf3200000 0x0 0x00e00000>,
-			 <0x03000000 0x9 0xc0000000 0x9 0xc0000000 0x0 0x40000000>;
+			 <0x03000000 0x0 0x40000000 0x9 0xc0000000 0x0 0x40000000>;
 		reg = <0xa 0x40c00000 0x0 0x00400000>,
 		      <0x0 0xfe180000 0x0 0x00010000>,
 		      <0x0 0xf3000000 0x0 0x00100000>;
@@ -1859,9 +1856,6 @@
 				<0 0 0 3 &pcie2x1l2_intc 2>,
 				<0 0 0 4 &pcie2x1l2_intc 3>;
 		linux,pci-domain = <4>;
-		num-ib-windows = <8>;
-		num-ob-windows = <8>;
-		num-viewport = <4>;
 		max-link-speed = <2>;
 		msi-map = <0x4000 &its0 0x4000 0x1000>;
 		num-lanes = <1>;
@@ -1870,7 +1864,7 @@
 		power-domains = <&power RK3588_PD_PCIE>;
 		ranges = <0x01000000 0x0 0xf4100000 0x0 0xf4100000 0x0 0x00100000>,
 			 <0x02000000 0x0 0xf4200000 0x0 0xf4200000 0x0 0x00e00000>,
-			 <0x03000000 0xa 0x00000000 0xa 0x00000000 0x0 0x40000000>;
+			 <0x03000000 0x0 0x40000000 0xa 0x00000000 0x0 0x40000000>;
 		reg = <0xa 0x41000000 0x0 0x00400000>,
 		      <0x0 0xfe190000 0x0 0x00010000>,
 		      <0x0 0xf4000000 0x0 0x00100000>;
@@ -1940,11 +1934,11 @@
 	sata0: sata@fe210000 {
 		compatible = "rockchip,rk3588-dwc-ahci", "snps,dwc-ahci";
 		reg = <0 0xfe210000 0 0x1000>;
+		interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH 0>;
 		clocks = <&cru ACLK_SATA0>, <&cru CLK_PMALIVE0>,
 			 <&cru CLK_RXOOB0>, <&cru CLK_PIPEPHY0_REF>,
 			 <&cru CLK_PIPEPHY0_PIPE_ASIC_G>;
 		clock-names = "sata", "pmalive", "rxoob", "ref", "asic";
-		interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH 0>;
 		ports-implemented = <0x1>;
 		#address-cells = <1>;
 		#size-cells = <0>;
@@ -1963,11 +1957,11 @@
 	sata2: sata@fe230000 {
 		compatible = "rockchip,rk3588-dwc-ahci", "snps,dwc-ahci";
 		reg = <0 0xfe230000 0 0x1000>;
+		interrupts = <GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH 0>;
 		clocks = <&cru ACLK_SATA2>, <&cru CLK_PMALIVE2>,
 			 <&cru CLK_RXOOB2>, <&cru CLK_PIPEPHY2_REF>,
 			 <&cru CLK_PIPEPHY2_PIPE_ASIC_G>;
 		clock-names = "sata", "pmalive", "rxoob", "ref", "asic";
-		interrupts = <GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH 0>;
 		ports-implemented = <0x1>;
 		#address-cells = <1>;
 		#size-cells = <0>;
@@ -2801,12 +2795,12 @@
 	combphy0_ps: phy@fee00000 {
 		compatible = "rockchip,rk3588-naneng-combphy";
 		reg = <0x0 0xfee00000 0x0 0x100>;
-		#phy-cells = <1>;
 		clocks = <&cru CLK_REF_PIPE_PHY0>, <&cru PCLK_PCIE_COMBO_PIPE_PHY0>,
 			 <&cru PCLK_PHP_ROOT>;
 		clock-names = "ref", "apb", "pipe";
 		assigned-clocks = <&cru CLK_REF_PIPE_PHY0>;
 		assigned-clock-rates = <100000000>;
+		#phy-cells = <1>;
 		resets = <&cru SRST_REF_PIPE_PHY0>, <&cru SRST_P_PCIE2_PHY0>;
 		reset-names = "phy", "apb";
 		rockchip,pipe-grf = <&php_grf>;
@@ -2817,12 +2811,12 @@
 	combphy2_psu: phy@fee20000 {
 		compatible = "rockchip,rk3588-naneng-combphy";
 		reg = <0x0 0xfee20000 0x0 0x100>;
-		#phy-cells = <1>;
 		clocks = <&cru CLK_REF_PIPE_PHY2>, <&cru PCLK_PCIE_COMBO_PIPE_PHY2>,
 			 <&cru PCLK_PHP_ROOT>;
 		clock-names = "ref", "apb", "pipe";
 		assigned-clocks = <&cru CLK_REF_PIPE_PHY2>;
 		assigned-clock-rates = <100000000>;
+		#phy-cells = <1>;
 		resets = <&cru SRST_REF_PIPE_PHY2>, <&cru SRST_P_PCIE2_PHY2>;
 		reset-names = "phy", "apb";
 		rockchip,pipe-grf = <&php_grf>;
