@@ -739,7 +739,7 @@ static void pcie_portdrv_shutdown(struct pci_dev *dev)
 		pm_runtime_dont_use_autosuspend(&dev->dev);
 	}
 
-	pcie_port_device_remove(dev);
+	device_for_each_child(&dev->dev, NULL, remove_iter);
 }
 
 static pci_ers_result_t pcie_portdrv_error_detected(struct pci_dev *dev,
