@@ -608,6 +608,9 @@ static int __init rockchip_cpufreq_driver_init(void)
 {
 	int ret;
 
+	if (of_machine_is_compatible("rockchip,rk3588") <= 0)
+		return -ENODEV;
+
 	ret = platform_driver_register(&rockchip_cpufreq_platdrv);
 	if (ret)
 		return ret;
@@ -630,6 +633,9 @@ module_init(rockchip_cpufreq_driver_init);
 
 static void __exit rockchip_cpufreq_driver_exit(void)
 {
+	if (of_machine_is_compatible("rockchip,rk3588") <= 0)
+		return;
+
 	platform_device_unregister(cpufreq_pdev);
 	platform_driver_unregister(&rockchip_cpufreq_platdrv);
 }
