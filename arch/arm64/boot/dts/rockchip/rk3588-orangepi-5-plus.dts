@@ -68,6 +68,13 @@
 
 	/*XXX: fan */
 	/* GPIO3 B2, active high, PWM3_IR_M1 */
+	fan: pwm-fan {
+		compatible = "pwm-fan";
+		cooling-levels = <0 70 75 80 100>;
+		fan-supply = <&vcc5v0_sys>;
+		pwms = <&pwm3 0 50000 0>;
+		#cooling-cells = <2>;
+	};
 
 	ir-receiver {
 		compatible = "gpio-ir-receiver";
@@ -387,6 +394,11 @@
 	status = "okay";
 	pinctrl-0 = <&pwm2m1_pins>;
 	pinctrl-names = "default";
+};
+
+&pwm3 {
+	status = "okay";
+	pinctrl-0 = <&pwm3m1_pins>;
 };
 
 &saradc {
