@@ -552,6 +552,56 @@
 	};
 };
 
+&soc_thermal {
+	trips {
+		cpu_temp_1: cpu_temp_1 {
+			temperature = <55000>;
+			hysteresis = <2000>;
+			type = "active";
+		};
+
+		cpu_temp_2: cpu_temp_2 {
+			temperature = <60000>;
+			hysteresis = <2000>;
+			type = "active";
+		};
+
+		cpu_temp_3: cpu_temp_3 {
+			temperature = <65000>;
+			hysteresis = <2000>;
+			type = "active";
+		};
+
+		cpu_temp_4: cpu_temp_4 {
+			temperature = <70000>;
+			hysteresis = <2000>;
+			type = "active";
+		};
+	};
+
+	cooling-maps {
+		map1 {
+			trip = <&cpu_temp_1>;
+			cooling-device = <&fan 0 1>;
+		};
+
+		map2 {
+			trip = <&cpu_temp_2>;
+			cooling-device = <&fan 1 2>;
+		};
+
+		map3 {
+			trip = <&cpu_temp_3>;
+			cooling-device = <&fan 2 3>;
+		};
+
+		map4 {
+			trip = <&cpu_temp_4>;
+			cooling-device = <&fan 3 4>;
+		};
+	};
+};
+
 &spi2 {
 	assigned-clocks = <&cru CLK_SPI2>;
 	assigned-clock-rates = <200000000>;
