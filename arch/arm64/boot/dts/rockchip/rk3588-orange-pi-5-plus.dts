@@ -74,6 +74,14 @@
 		};
 	};
 
+	fan: pwm-fan {
+		compatible = "pwm-fan";
+		cooling-levels = <0 70 75 80 100>;
+		fan-supply = <&vcc5v0_sys>;
+		pwms = <&pwm3 0 50000 0>;
+		#cooling-cells = <2>;
+	};
+
 	ir-receiver {
 		compatible = "gpio-ir-receiver";
 		gpios = <&gpio4 RK_PB3 GPIO_ACTIVE_LOW>;
@@ -487,6 +495,11 @@
 		     &i2s0_sdi0
 		     &i2s0_sdo0>;
 	status = "okay";
+};
+
+&pwm3 {
+	status = "okay";
+	pinctrl-0 = <&pwm3m1_pins>;
 };
 
 &pinctrl {
