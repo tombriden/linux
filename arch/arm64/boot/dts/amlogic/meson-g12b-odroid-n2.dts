@@ -13,3 +13,10 @@
 	compatible = "hardkernel,odroid-n2", "amlogic,s922x", "amlogic,g12b";
 	model = "Hardkernel ODROID-N2";
 };
+
+&cpub_opp_table_1 {
+	opp-2016000000 {
+		opp-hz = /bits/ 64 <2016000000>;
+		opp-microvolt = <1022000>;
+	};
+};
