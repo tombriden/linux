@@ -1313,8 +1313,8 @@ static int rk_udphy_usb3_phy_exit(struct phy *phy)
 }
 
 static const struct phy_ops rk_udphy_usb3_phy_ops = {
-	.init		= rk_udphy_usb3_phy_init,
-	.exit		= rk_udphy_usb3_phy_exit,
+	.power_on	= rk_udphy_usb3_phy_init,
+	.power_off	= rk_udphy_usb3_phy_exit,
 	.owner		= THIS_MODULE,
 };
 
