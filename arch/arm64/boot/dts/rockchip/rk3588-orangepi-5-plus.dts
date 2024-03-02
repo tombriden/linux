@@ -930,6 +930,7 @@
 
 &usb_host0_xhci {
 	usb-role-switch;
+	snps,usb3-phy-reset-quirk;
 	status = "okay";
 
 	port {
