@@ -314,6 +314,7 @@
 
 &usb_host0_xhci {
 	usb-role-switch;
+	snps,usb3-phy-reset-quirk;
 
 	port {
 		usb_host0_xhci_drd_sw: endpoint {
