@@ -1475,7 +1475,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
 				 * and cause general protection fault
 				 * ultimately.
 				 */
-				fput(vma->vm_file);
+				vma_fput(vma);
 				vm_area_free(vma);
 				vma = merge;
 				/* Update vm_flags to pick up the change. */
@@ -1565,7 +1565,7 @@ close_and_free_vma:
 
 	if (file || vma->vm_file) {
 unmap_and_free_vma:
-		fput(vma->vm_file);
+		vma_fput(vma);
 		vma->vm_file = NULL;
 
 		vma_iter_set(&vmi, vma->vm_end);
@@ -1630,6 +1630,9 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
 	unsigned long populate = 0;
 	unsigned long ret = -EINVAL;
 	struct file *file;
+#if 1 /* IS_ENABLED(CONFIG_AUFS_FS) */
+	struct file *prfile;
+#endif
 
 	pr_warn_once("%s (%d) uses deprecated remap_file_pages() syscall. See Documentation/mm/remap_file_pages.rst.\n",
 		     current->comm, current->pid);
@@ -1688,6 +1691,32 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
 	if (vma->vm_flags & VM_LOCKED)
 		flags |= MAP_LOCKED;
 
+#if 1 /* IS_ENABLED(CONFIG_AUFS_FS) */
+	vma_get_file(vma);
+	file = vma->vm_file;
+	prfile = vma->vm_prfile;
+	ret = security_mmap_file(vma->vm_file, prot, flags);
+	if (!ret) {
+		ret = do_mmap(vma->vm_file, start, size,
+			      prot, flags, /*vm_flags*/0, pgoff, &populate, NULL);
+		if (!IS_ERR_VALUE(ret) && file && prfile) {
+			struct vm_area_struct *new_vma;
+
+			new_vma = find_vma(mm, ret);
+			if (!new_vma->vm_prfile)
+				new_vma->vm_prfile = prfile;
+			if (prfile)
+				get_file(prfile);
+		}
+	}
+	/*
+	 * two fput()s instead of vma_fput(vma),
+	 * coz vma may not be available anymore.
+	 */
+	fput(file);
+	if (prfile)
+		fput(prfile);
+#else
 	file = get_file(vma->vm_file);
 	ret = security_mmap_file(vma->vm_file, prot, flags);
 	if (ret)
@@ -1696,6 +1725,7 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
 			prot, flags, 0, pgoff, &populate, NULL);
 out_fput:
 	fput(file);
+#endif /* CONFIG_AUFS_FS */
 out:
 	mmap_write_unlock(mm);
 	if (populate)
