@@ -35,7 +35,7 @@
 
 #define SETFL_MASK (O_APPEND | O_NONBLOCK | O_NDELAY | O_DIRECT | O_NOATIME)
 
-static int setfl(int fd, struct file * filp, unsigned int arg)
+int setfl(int fd, struct file * filp, unsigned int arg)
 {
 	struct inode * inode = file_inode(filp);
 	int error = 0;
@@ -65,6 +65,8 @@ static int setfl(int fd, struct file * filp, unsigned int arg)
 
 	if (filp->f_op->check_flags)
 		error = filp->f_op->check_flags(arg);
+	if (!error && filp->f_op->setfl)
+		error = filp->f_op->setfl(filp, arg);
 	if (error)
 		return error;
 
@@ -86,6 +88,7 @@ static int setfl(int fd, struct file * filp, unsigned int arg)
  out:
 	return error;
 }
+EXPORT_SYMBOL_GPL(setfl);
 
 void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
 		int force)
