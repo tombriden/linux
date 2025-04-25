@@ -220,6 +220,7 @@ int fsnotify_pre_content(const struct path *path, const loff_t *ppos,
 	return fsnotify_parent(path->dentry, FS_PRE_ACCESS, &range,
 			       FSNOTIFY_EVENT_FILE_RANGE);
 }
+EXPORT_SYMBOL_GPL(fsnotify_pre_content);
 
 /*
  * Notify this dentry's parent about a child's events with child name info
