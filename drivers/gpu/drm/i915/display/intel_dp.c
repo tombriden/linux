@@ -366,10 +366,16 @@ int intel_dp_max_source_lane_count(struct intel_digital_port *dig_port)
 int intel_dp_max_common_lane_count(struct intel_dp *intel_dp)
 {
 	struct intel_digital_port *dig_port = dp_to_dig_port(intel_dp);
+	struct intel_connector *intel_connector = intel_dp->attached_connector;
 	int source_max = intel_dp_max_source_lane_count(dig_port);
 	int sink_max = intel_dp->max_sink_lane_count;
 	int lane_max = intel_tc_port_max_lane_count(dig_port);
 	int lttpr_max = drm_dp_lttpr_max_lane_count(intel_dp->lttpr_common_caps);
+
+	/* Bypass unpopulated link requirements if interface connector is forced hot */
+	if (intel_connector && intel_connector->base.force == DRM_FORCE_ON) {
+		return min(source_max, lane_max);
+	}
 
 	if (lttpr_max)
 		sink_max = min(sink_max, lttpr_max);
@@ -790,20 +796,30 @@ int intel_dp_link_config_index(struct intel_dp *intel_dp, int link_rate, int lan
 static void intel_dp_set_common_rates(struct intel_dp *intel_dp)
 {
 	struct intel_display *display = to_intel_display(intel_dp);
+	struct intel_connector *intel_connector = intel_dp->attached_connector;
 
-	drm_WARN_ON(display->drm,
-		    !intel_dp->num_source_rates || !intel_dp->num_sink_rates);
+	/* Force complete source capabilities pool directly into common arrays if headless */
+	if (intel_connector && intel_connector->base.force == DRM_FORCE_ON) {
+		int i;
+		for (i = 0; i < intel_dp->num_source_rates; i++) {
+			intel_dp->common_rates[i] = intel_dp->source_rates[i];
+		}
+		intel_dp->num_common_rates = intel_dp->num_source_rates;
+	} else {
+		drm_WARN_ON(display->drm,
+			    !intel_dp->num_source_rates || !intel_dp->num_sink_rates);
 
-	intel_dp->num_common_rates = intersect_rates(intel_dp->source_rates,
-						     intel_dp->num_source_rates,
-						     intel_dp->sink_rates,
-						     intel_dp->num_sink_rates,
-						     intel_dp->common_rates);
+		intel_dp->num_common_rates = intersect_rates(intel_dp->source_rates,
+							     intel_dp->num_source_rates,
+							     intel_dp->sink_rates,
+							     intel_dp->num_sink_rates,
+							     intel_dp->common_rates);
 
-	/* Paranoia, there should always be something in common. */
-	if (drm_WARN_ON(display->drm, intel_dp->num_common_rates == 0)) {
-		intel_dp->common_rates[0] = 162000;
-		intel_dp->num_common_rates = 1;
+		/* Paranoia, there should always be something in common. */
+		if (drm_WARN_ON(display->drm, intel_dp->num_common_rates == 0)) {
+			intel_dp->common_rates[0] = 162000;
+			intel_dp->num_common_rates = 1;
+		}
 	}
 
 	intel_dp_link_config_init(intel_dp);
