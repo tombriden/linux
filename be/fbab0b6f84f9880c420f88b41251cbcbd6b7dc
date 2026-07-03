@@ -1,0 +1,37 @@
+drivers/gpu/drm/i915/display/intel_ddi.c
+  s_6c7f9ec09ffaad::t_4b9ae5c11d479e 3240
+  s_6c7f9ec09ffaad::t_f6e1ca1fe2a300 3559
+drivers/gpu/drm/i915/display/intel_display.c
+  s_6c7f9ec09ffaad::t_a46002b165778a 1726-1728
+  s_6c7f9ec09ffaad::t_59898fd583e97a 1811,1814
+  s_6c7f9ec09ffaad::t_afe197ec120379 1812-1813,1815
+  s_6c7f9ec09ffaad::t_400e0fdfc289a8 1729,1735-1736
+  s_6c7f9ec09ffaad::t_5f780f92b91db9 1730-1732,1734
+  s_6c7f9ec09ffaad::t_32f8276d755543 28,32
+  s_6c7f9ec09ffaad::t_897f448b07d314 1733
+  s_6c7f9ec09ffaad::t_11101e84114a66 1807-1810,1816-1817
+  s_6c7f9ec09ffaad::t_4476d2a8bdedb8 7318-7322
+drivers/gpu/drm/i915/display/intel_crtc.c
+  s_6c7f9ec09ffaad::t_423dd5055ef1dc 210,216-221,223-229
+  s_6c7f9ec09ffaad::t_68a65799a1ecb3 209,212-215,222
+  s_6c7f9ec09ffaad::t_c40325135bd7bc 139-149
+  s_6c7f9ec09ffaad::t_b6ebea4b22a000 206-208
+  s_6c7f9ec09ffaad::t_71419c775a08a5 211
+  s_6c7f9ec09ffaad::t_76b258825442fc 230-232
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "befbab0b6f84f9880c420f88b41251cbcbd6b7dc",
+  "prompts": {},
+  "sessions": {
+    "s_6c7f9ec09ffaad": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0d6b80863ffefqh9rUhyZcjRGH",
+        "model": "deepseek/deepseek-v4-flash"
+      },
+      "human_author": null
+    }
+  }
+}
