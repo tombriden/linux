@@ -1,0 +1,24 @@
+drivers/gpu/drm/i915/display/intel_display.c
+  s_6c7f9ec09ffaad::t_32f8276d755543 28,32
+  s_6c7f9ec09ffaad::t_5f780f92b91db9 1730-1733
+  s_6c7f9ec09ffaad::t_11101e84114a66 1807-1810,1816-1817
+  s_6c7f9ec09ffaad::t_afe197ec120379 1811-1815
+  s_6c7f9ec09ffaad::t_400e0fdfc289a8 1729,1734-1736
+  s_6c7f9ec09ffaad::t_a46002b165778a 1726-1728
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "b396e4964385da4be73b9b39f4dae70ea3ca1348",
+  "prompts": {},
+  "sessions": {
+    "s_6c7f9ec09ffaad": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0d6b80863ffefqh9rUhyZcjRGH",
+        "model": "deepseek/deepseek-v4-flash"
+      },
+      "human_author": "Tom Briden <tom@decompile.me.uk>"
+    }
+  }
+}
