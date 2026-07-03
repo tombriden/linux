@@ -1,0 +1,30 @@
+drivers/gpu/drm/i915/display/intel_ddi.c
+  s_6c7f9ec09ffaad::t_f6e1ca1fe2a300 3559
+  s_6c7f9ec09ffaad::t_4b9ae5c11d479e 3240
+drivers/gpu/drm/i915/display/intel_display.c
+  s_6c7f9ec09ffaad::t_59898fd583e97a 1812,1815
+  s_6c7f9ec09ffaad::t_afe197ec120379 1813-1814,1816
+  s_6c7f9ec09ffaad::t_5f780f92b91db9 1730-1732,1735
+  s_6c7f9ec09ffaad::t_32f8276d755543 28,32
+  s_6c7f9ec09ffaad::t_a46002b165778a 1726-1728
+  s_6c7f9ec09ffaad::t_400e0fdfc289a8 1729,1736-1737
+  s_6c7f9ec09ffaad::t_26c0c1e2dd7fe3 1733
+  s_6c7f9ec09ffaad::t_11101e84114a66 1808-1811,1817-1818
+  s_6c7f9ec09ffaad::t_897f448b07d314 1734
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "4aceb5e50362103238e5b2a5a73fe89850922683",
+  "prompts": {},
+  "sessions": {
+    "s_6c7f9ec09ffaad": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0d6b80863ffefqh9rUhyZcjRGH",
+        "model": "deepseek/deepseek-v4-flash"
+      },
+      "human_author": null
+    }
+  }
+}
