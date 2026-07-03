@@ -1,0 +1,29 @@
+drivers/gpu/drm/i915/display/intel_display_types.h
+  s_6c7f9ec09ffaad::t_a414c9073bcfa3 1576-1577
+  s_6c7f9ec09ffaad::t_3d6bbf4e211839 29
+drivers/gpu/drm/i915/display/intel_ddi.c
+  s_6c7f9ec09ffaad::t_1467c5fe5ff9eb 3560
+  s_6c7f9ec09ffaad::t_1fe50abbc8fb41 3241
+  s_6c7f9ec09ffaad::t_d46d88d40601fe 28
+drivers/gpu/drm/i915/display/intel_crtc.c
+  s_6c7f9ec09ffaad::t_d71626fa81bf4a 5,7
+  s_6c7f9ec09ffaad::t_8b8044d86ca392 196-206
+  s_6c7f9ec09ffaad::t_b19fcb6733b3ce 229
+  s_6c7f9ec09ffaad::t_f1d457148291a2 227-228
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "1a6388e784e64e24a8a41b376a2831e6f79b5af8",
+  "prompts": {},
+  "sessions": {
+    "s_6c7f9ec09ffaad": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0d6b80863ffefqh9rUhyZcjRGH",
+        "model": "deepseek/deepseek-v4-flash"
+      },
+      "human_author": null
+    }
+  }
+}
