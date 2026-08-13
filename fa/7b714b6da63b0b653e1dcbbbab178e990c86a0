@@ -1,0 +1,21 @@
+drivers/gpu/drm/i915/display/intel_dp.c
+  s_7f4b2edc235986::t_9117fc007cb19d 6750-6752
+  s_7f4b2edc235986::t_e78dcc81743dcd 6695-6706,6711-6715,6717-6731
+  s_7f4b2edc235986::t_b8691ce37f21f2 6707-6710,6716
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "fa7b714b6da63b0b653e1dcbbbab178e990c86a0",
+  "prompts": {},
+  "sessions": {
+    "s_7f4b2edc235986": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cbca7186-5777-473d-8138-9d5f51552a1d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Tom Briden <tom@decompile.me.uk>"
+    }
+  }
+}
