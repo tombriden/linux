@@ -1,0 +1,19 @@
+drivers/gpu/drm/drm_edid_load.c
+  s_7f4b2edc235986::t_db1623ce8b89e5 80-88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "e394ee1ac616dda816c529a7ac54cbf371907396",
+  "prompts": {},
+  "sessions": {
+    "s_7f4b2edc235986": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cbca7186-5777-473d-8138-9d5f51552a1d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Tom Briden <tom@decompile.me.uk>"
+    }
+  }
+}
