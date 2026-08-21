@@ -11,6 +11,7 @@
 #include <linux/device.h>
 #include <linux/irqreturn.h>
 #include <linux/list.h>
+#include <linux/mutex.h>
 #include <linux/scatterlist.h>
 #include <linux/types.h>
 
@@ -46,6 +47,9 @@ struct ipu7_bus_device {
 	struct ia_gofo_boot_config *boot_config;
 	dma_addr_t boot_config_dma_addr;
 	u32 boot_config_size;
+	/* Serialise access to the firmware task message buffers */
+	struct mutex acquire_fw_task_buffer_lock;
+	unsigned int (*get_running_fw_task_count)(struct ipu7_bus_device *adev);
 };
 
 struct ipu7_auxdrv_data {
