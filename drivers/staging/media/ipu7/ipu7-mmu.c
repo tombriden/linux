@@ -11,12 +11,14 @@
 #include <linux/bits.h>
 #include <linux/bug.h>
 #include <linux/cacheflush.h>
+#include <linux/delay.h>
 #include <linux/device.h>
 #include <linux/dma-mapping.h>
 #include <linux/err.h>
 #include <linux/gfp.h>
 #include <linux/iopoll.h>
 #include <linux/iova.h>
+#include <linux/limits.h>
 #include <linux/math.h>
 #include <linux/minmax.h>
 #include <linux/pci.h>
@@ -27,6 +29,7 @@
 #include <linux/vmalloc.h>
 
 #include "ipu7.h"
+#include "ipu7-bus.h"
 #include "ipu7-dma.h"
 #include "ipu7-mmu.h"
 #include "ipu7-platform-regs.h"
@@ -66,12 +69,48 @@ static __maybe_unused void mmu_irq_handler(struct ipu7_mmu *mmu)
 	}
 }
 
+#define WAIT_FW_MSG_BUFS_CLEAR_TIME_MS	17
+#define WAIT_FW_MSG_BUFS_CLEAR_TIMES	5
+
 static void tlb_invalidate(struct ipu7_mmu *mmu)
 {
+	struct ipu7_bus_device *adev = to_ipu7_bus_device(mmu->dev);
+	unsigned int prev_task_cnt = UINT_MAX;
+	unsigned int not_decreasing_count = 0;
+	unsigned int curr_task_cnt;
 	unsigned long flags;
 	unsigned int i;
 	int ret;
 	u32 val;
+
+	/*
+	 * When the PSYS driver is bound it publishes a callback reporting how
+	 * many firmware tasks are still in flight. Invalidating the TLB under
+	 * them corrupts in-flight DMA, so drain first. ISYS-only configurations
+	 * leave the callback NULL and skip this entirely.
+	 */
+	if (adev->get_running_fw_task_count) {
+		while (1) {
+			curr_task_cnt = adev->get_running_fw_task_count(adev);
+			if (curr_task_cnt == 0)
+				break;
+
+			if (curr_task_cnt >= prev_task_cnt)
+				not_decreasing_count++;
+			else
+				not_decreasing_count = 0;
+			prev_task_cnt = curr_task_cnt;
+
+			if (not_decreasing_count >
+			    WAIT_FW_MSG_BUFS_CLEAR_TIMES) {
+				dev_warn(mmu->dev,
+					 "wait running fw tasks clear timeout\n");
+				break;
+			}
+
+			msleep(WAIT_FW_MSG_BUFS_CLEAR_TIME_MS);
+		}
+	}
 
 	spin_lock_irqsave(&mmu->ready_lock, flags);
 	if (!mmu->ready) {
